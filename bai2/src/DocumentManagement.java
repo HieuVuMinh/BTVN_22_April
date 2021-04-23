@@ -17,13 +17,21 @@ public class DocumentManagement {
     public static final String notFound = "Không tìm thấy tài liệu phù hợp";
     Scanner sc = new Scanner(System.in);
     List<Document> documentList = new ArrayList<>();
+    private int idDocument;
+    private String publishingHouse;
+    private int edition;
+    private String nameOfAuthor;
+    private int pageNumber;
+    private int publishingNumber;
+    private int publishingMonth;
+    private String publishingDay;
 
     public DocumentManagement() {
         documentList.add(new Book(1, "James Arthur", 500,
                 "Josh", 200));
-        documentList.add(new Magazine(2, "Lukas Graham", 300,
+        documentList.add(new Magazine(3, "Lukas Graham", 300,
                 2, 6));
-        documentList.add(new Newspaper(3, "Ed Sheeran", 630,
+        documentList.add(new Newspaper(2, "Ed Sheeran", 630,
                 "11/2/2019"));
     }
 
@@ -52,29 +60,26 @@ public class DocumentManagement {
         }
     }
 
-    private Newspaper inputInfoNewspaper() {
-        sc.nextLine();
+    public void InfoDocument() {
         System.out.println(inputId);
-        int idDocument = sc.nextInt();
-        System.out.println(inputPublishingHouse);
-        String publishingHouse = sc.nextLine();
-        System.out.println(inputEdition);
-        int edition = sc.nextInt();
+        idDocument = sc.nextInt();
         sc.nextLine();
+        System.out.println(inputPublishingHouse);
+        publishingHouse = sc.nextLine();
+        System.out.println(inputEdition);
+        edition = sc.nextInt();
+    }
+
+    public Newspaper inputInfoNewspaper() {
+        InfoDocument();
         System.out.println(inputPublishingDay);
         String publishingDay = sc.nextLine();
         Newspaper newspaper = new Newspaper(idDocument, publishingHouse, edition, publishingDay);
         return newspaper;
     }
 
-    private Magazine inputInfoMagazine() {
-        sc.nextLine();
-        System.out.println(inputId);
-        int idDocument = sc.nextInt();
-        System.out.println(inputPublishingDay);
-        String publishingHouse = sc.nextLine();
-        System.out.println(inputEdition);
-        int edition = sc.nextInt();
+    public Magazine inputInfoMagazine() {
+        InfoDocument();
         System.out.println(inputPublishingNumber);
         int publishingNumber = sc.nextInt();
         System.out.println(inputPublishingMonth);
@@ -83,14 +88,8 @@ public class DocumentManagement {
         return magazine;
     }
 
-    private Book inputInfoBook() {
-        sc.nextLine();
-        System.out.println(inputId);
-        int idDocument = sc.nextInt();
-        System.out.println(inputPublishingHouse);
-        String publishingHouse = sc.nextLine();
-        System.out.println(inputEdition);
-        int edition = sc.nextInt();
+    public Book inputInfoBook() {
+        InfoDocument();
         sc.nextLine();
         System.out.println(inputnNameOfAuthor);
         String nameOfAuthor = sc.nextLine();
@@ -133,14 +132,16 @@ public class DocumentManagement {
     }
 
     // Tìm kiếm tài liệu theo mã sử dụng tìm kiếm nhị phân
-    public void findDocument(int idDocument, List<Document> documentList){
+    public void findDocument(int idDocument, List<Document> documentList) {
         Document document = findDocumentUsingBinarySearch(idDocument, documentList);
-        if (document == null){
+        if (document == null) {
             System.out.println(notFound);
-        }else
-            System.out.println(document.toString());
+        } else
+            System.out.println(document);
     }
+
     public Document findDocumentUsingBinarySearch(int idDocument, List<Document> documentList) {
+        sortDocumentById();
         int left = 0;
         int right = documentList.size() - 1;
         do {
@@ -157,15 +158,27 @@ public class DocumentManagement {
         return null;
     }
 
-    // Sắp xếp tài liệu theo tên nhà xuất bản sử dụng insertion sort
-    public void sortDocument(){
+    public void sortDocumentById() {
         for (int i = 0; i < documentList.size(); i++) {
             int index = i;
             Document temp = documentList.get(i);
-            while (index > 0){
+            while (index > 0 && temp.getIdDocument() > documentList.get(index - 1).getIdDocument()) {
+                documentList.set(index, documentList.get(index - 1));
+                index--;
+            }
+            documentList.set(index, temp);
+        }
+    }
+
+    // Sắp xếp tài liệu theo tên nhà xuất bản sử dụng insertion sort
+    public void sortDocument() {
+        for (int i = 0; i < documentList.size(); i++) {
+            int index = i;
+            Document temp = documentList.get(i);
+            while (index > 0) {
                 boolean isTempSmallerThanIndex =
                         temp.getPublishingHouse().compareTo(documentList.get(index - 1).getPublishingHouse()) < 0;
-                if (isTempSmallerThanIndex == false){
+                if (isTempSmallerThanIndex == false) {
                     break;
                 } else {
                     documentList.set(index, documentList.get(index - 1));
